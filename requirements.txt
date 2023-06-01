@@ -1,0 +1,15 @@
+django==4.2.1
+django-environ==0.10.0
+djangorestframework==3.14.0
+pillow==9.5.0
+psycopg2==2.9.6
+psycopg2-binary==2.9.6
+django-widget-tweaks==1.4.12
+django-allauth==0.54.0
+django-crispy-forms==2.0
+crispy-tailwind==0.5.0
+django-tailwind==3.5.0
+django-countries
+django-naomi
+weasyprint
+phonenumbers==8.13.13
