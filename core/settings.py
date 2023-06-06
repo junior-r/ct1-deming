@@ -131,8 +131,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+DATABASE_NAME = env('DATABASE_NAME')
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///CT1"),
+    "default": env.db("DATABASE_URL", default=f"postgres:///{DATABASE_NAME}"),
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
