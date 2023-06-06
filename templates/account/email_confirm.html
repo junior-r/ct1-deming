@@ -1,0 +1,84 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+{% load i18n %}
+{% load account %}
+
+{% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
+
+
+{% block content %}
+    <div class="dark:bg-gray-900 bg-gray-200 flex flex-col items-center justify-center" style="min-height: 100vh">
+        <button id="theme-toggle" type="button"
+                class="flex absolute top-4 left-6 gap-4 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor"
+                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor"
+                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                      fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+
+        <section class="bg-white dark:bg-gray-900 rounded">
+            <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+                <div class="mr-6 place-self-center lg:col-span-7">
+                    <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
+                        ¡Confirme su dirección de correo electrónico!</h1>
+                    <p class="max-w-2xl mb-6 font-light text-gray-700 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
+                        {% user_display confirmation.email_address.user as user_display %}
+                        {% with confirmation.email_address.email as email %}
+                            Por su seguridad y la nuestra, por favor confirme que
+                            <span class="text-blue-600 dark:text-blue-500 font-bold"><a
+                                    href="mailto:{{ email }}">{{ email }}</a></span>
+                        {% endwith %}
+                        es una dirección de correo electrónico del usuario
+                        <span class="text-yellow-500 dark:text-yellow-300 font-bold">
+                            {{ user_display }}
+                        </span>
+                    </p>
+
+                    <form method="post" action="{% url 'account_confirm_email' confirmation.key %}" class="mb-4">
+                        {% csrf_token %}
+                        <button class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+                                type="submit">Confirmar Email</button>
+                    </form>
+
+                    <a href="#"
+                       class="inline-flex mb-4 items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                        Contactar con soporte
+                    </a>
+                </div>
+                <div class="hidden lg:mt-0 lg:col-span-5 lg:flex bg-gray-700 justify-center rounded-lg p-4">
+                    <img src="{% static 'Home/img/components/logo_deming2.png' %}" class="object-cover" alt="mockup">
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <h1>{% trans "Confirm E-mail Address" %}</h1>
+
+    {% if confirmation %}
+        {% user_display confirmation.email_address.user as user_display %}
+
+        <p>{% blocktrans with confirmation.email_address.email as email %}Please confirm that
+            <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user {{ user_display }}
+            .{% endblocktrans %}</p>
+
+        <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+            {% csrf_token %}
+            <button type="submit">{% trans 'Confirm' %}</button>
+        </form>
+
+    {% else %}
+
+        {% url 'account_email' as email_url %}
+
+        <p>{% blocktrans %}This e-mail confirmation link expired or is invalid. Please
+            <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.{% endblocktrans %}</p>
+
+    {% endif %}
+
+{% endblock %}

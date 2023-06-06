@@ -11,6 +11,7 @@
         {% endblock %}
     </title>
     <link href="{% static 'Home/css/lib/flowbite.min.css' %}"  rel="stylesheet" />
+    <script src="{% static 'Home/js/components/darkMode.js' %}"></script>
     {% block extra_head %}
     {% endblock %}
 </head>
@@ -27,5 +28,18 @@
     {% block javascript %}
     {% endblock %}
     <script src="{% static 'Home/js/lib/flowbite.min.js' %}"></script>
+    <script src="{% static 'Home/js/components/switchDarkMode.js' %}"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% if messages %}
+        {% for m in messages %}
+            <script>
+                Swal.fire({
+                    title: '{{ m.tags|capfirst }}',
+                    text: '{{ m }}',
+                    icon: '{{ m.tags }}'
+                })
+            </script>
+        {% endfor %}
+    {% endif %}
 </body>
 </html>
