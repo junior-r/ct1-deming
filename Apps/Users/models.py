@@ -15,8 +15,20 @@ def user_directory_image_path(instance, filename):
 
 
 class User(AbstractUser):
+    USER_TYPE_CHOICES = (
+        ('student', 'Estudiante'),
+        ('teacher', 'Profesor'),
+        ('company', 'Compañía/Institución'),
+    )
     image = models.ImageField(upload_to=user_directory_image_path)
     phone = models.CharField(max_length=20)
+    user_type = models.CharField(max_length=25, choices=USER_TYPE_CHOICES)
+
+    def get_image(self):
+        if self.image:
+            return self.image.url
+        else:
+            return os.path.join(settings.MEDIA_URL, 'user_profile_placeholder.jpg')
 
     def __str__(self):
         return f'{self.get_username()}'

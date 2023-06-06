@@ -61,46 +61,126 @@
                         <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Ingresa tus datos
                         </h1>
-                        <form class="space-y-4 md:space-y-6" method="post" action="{% url 'account_signup' %}">
+                        <form class="space-y-4 md:space-y-6" enctype="multipart/form-data" method="post" action="{% url 'account_signup' %}">
                             {% csrf_token %}
                             <div>
-                                <label for="{{ form.email.id_for_label }}"
-                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    {{ form.email.label }}
+                                <label for="{{ form.image.id_for_label }}" style="width: max-content;"
+                                       class="block mb-2 text-sm cursor-pointer mx-auto font-medium text-gray-900 dark:text-white">
+
+                                    <figure class="h-auto max-w-xs mx-auto relative">
+                                        <img class="h-auto max-w-full mx-auto rounded-lg object-cover" loading="lazy"
+                                             id="image_placeholder"
+                                             src="{% static 'Home/img/components/user_profile_placeholder.jpg' %}"
+                                             alt="image description">
+                                        <figcaption id="image_label"
+                                                    class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">
+                                            Imagen de perfil
+                                        </figcaption>
+                                        <button type="button" id="delete-file-btn"
+                                                style="bottom: 0;"
+                                                class="px-3 absolute hidden py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                            <svg fill="none" class="w-4 h-4" stroke="currentColor"
+                                                 stroke-width="1.5"
+                                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                                 aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
+                                            </svg>
+                                        </button>
+                                    </figure>
+
                                 </label>
-                                {% render_field form.email name=form.email.html_name id=form.email.id_for_label type='email' placeholder="name@example.com" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                {% render_field form.image name=form.image.html_name id=form.image.id_for_label type='file' class="block hidden w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" %}
                             </div>
+
                             <div>
-                                <label for="{{ form.username.id_for_label }}"
-                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    {{ form.username.label }}
+                                <label for="{{ form.user_type.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium flex gap-2 text-gray-900 dark:text-white">
+                                    <span>{{ form.user_type.label }}</span>
+                                    <svg fill="none" data-tooltip-target="tooltip-user-type-info" class="w-5 h-5 cursor-pointer" stroke="currentColor"
+                                         stroke-width="1.5" viewBox="0 0 24 24"
+                                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"></path>
+                                    </svg>
                                 </label>
-                                {% render_field form.username name=form.username.html_name id=form.username.id_for_label type='text' placeholder="john123" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                <div id="tooltip-user-type-info" role="tooltip"
+                                     class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                   Depende la opción que selecciones posteriormente se te solicitará más información.
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
+                                {% render_field form.user_type name=form.user_type.html_name id=form.user_type.id_for_label type='select' class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
                             </div>
+
+                            <div class="grid gap-6 mb-6 grid-cols-1 md:grid-cols-2">
+                                <div>
+                                    <label for="{{ form.email.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.email.label }}
+                                    </label>
+                                    {% render_field form.email name=form.email.html_name id=form.email.id_for_label type='email' placeholder="name@example.com" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                                <div>
+                                    <label for="{{ form.username.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.username.label }}
+                                    </label>
+                                    {% render_field form.username name=form.username.html_name id=form.username.id_for_label type='text' placeholder="john123" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+
+                            <div class="grid gap-6 mb-6 grid-cols-1 md:grid-cols-2">
+                                <div>
+                                    <label for="{{ form.first_name.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.first_name.label }}
+                                    </label>
+                                    {% render_field form.first_name name=form.first_name.html_name id=form.first_name.id_for_label type='text' placeholder="John" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                                <div>
+                                    <label for="{{ form.last_name.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.last_name.label }}
+                                    </label>
+                                    {% render_field form.last_name name=form.last_name.html_name id=form.last_name.id_for_label type='text' placeholder="Smith" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="{{ form.phone.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.phone.label }}
+                                </label>
+                                {% render_field form.phone name=form.phone.html_name id=form.phone.id_for_label type='text' placeholder="+XXxxxxxxx" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                            </div>
+
                             <div>
                                 <label for="{{ form.password1.id_for_label }}"
                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     {{ form.password1.label }}
                                 </label>
-                                {% render_field form.password1 name=form.password1.html_name id=form.password1.id_for_label type='password' placeholder="name@example.com" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                {% render_field form.password1 name=form.password1.html_name id=form.password1.id_for_label type='password' placeholder="********" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
                             </div>
                             <div>
                                 <label for="{{ form.password2.id_for_label }}"
                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     {{ form.password2.label }}
                                 </label>
-                                {% render_field form.password2 name=form.password2.html_name id=form.password2.id_for_label type='password' placeholder="name@example.com" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                {% render_field form.password2 name=form.password2.html_name id=form.password2.id_for_label type='password' placeholder="********" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
                             </div>
+
                             {% if redirect_field_value %}
                                 <input type="hidden" name="{{ redirect_field_name }}"
                                        value="{{ redirect_field_value }}"/>
                             {% endif %}
+
                             <button type="submit"
                                     class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 {% trans "Sign Up" %}
                             </button>
                             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                                ¿Ya tiene una cuenta? Por favor <a href="{{ login_url }}" class="font-medium text-blue-600 hover:underline dark:text-blue-500">{% trans 'Sign In' %}</a>.
+                                ¿Ya tiene una cuenta? Por favor <a href="{{ login_url }}"
+                                                                   class="font-medium text-blue-600 hover:underline dark:text-blue-500">{% trans 'Sign In' %}</a>.
                             </p>
                         </form>
                     </div>
@@ -112,19 +192,8 @@
 
         </div>
     </div>
+{% endblock %}
 
-    <h1>{% trans "Sign Up" %}</h1>
-
-    <p>
-    </p>
-
-    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-        {% endif %}
-        <button type="submit">{% trans "Sign Up" %} &raquo;</button>
-    </form>
-
+{% block extra_body %}
+    <script src="{% static 'Users/js/load_image_user.js' %}"></script>
 {% endblock %}
