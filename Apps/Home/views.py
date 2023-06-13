@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from Apps.Users.models import User
+from Apps.Users.models import User, Student
 
 
 def home(request):

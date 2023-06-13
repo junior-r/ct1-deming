@@ -1,7 +1,8 @@
 from allauth.account.forms import SignupForm
 from django import forms
+from django_countries.fields import CountryField
 
-from Apps.Users.models import User
+from Apps.Users.models import User, Institution
 
 
 class CreateUserForm(SignupForm):
@@ -42,12 +43,31 @@ class CreateUserForm(SignupForm):
         user = super().save(request)
         user.image = self.cleaned_data['image']
         user.user_type = self.cleaned_data['user_type']
-        print(self.cleaned_data)
-        print(self.cleaned_data['image'], self.cleaned_data['user_type'])
+        user.phone = self.cleaned_data['phone']
         user.save()
         return user
 
     class Meta:
         model = User
         fields = ['image', 'email', 'username', 'first_name', 'last_name', 'phone', 'password1', 'password2']
+
+
+class InstitutionCreationForm(forms.ModelForm):
+    manager_name = forms.CharField(label='Nombres del Director', required=True, widget=forms.TextInput(attrs={
+
+    }))
+    manager_phone = forms.CharField(label='Teléfono del Director', required=True, widget=forms.TextInput(attrs={
+
+    }))
+    manager_email = forms.CharField(label='E-mail del Director', required=True, widget=forms.TextInput(attrs={
+
+    }))
+    city = forms.CharField(label='Ciudad', required=True, widget=forms.TextInput(attrs={
+
+    }))
+    country = CountryField()
+
+    class Meta:
+        model = Institution
+        fields = ['manager_name', 'manager_phone', 'manager_email', 'city', 'country']
 
