@@ -71,6 +71,7 @@ INSTALLED_APPS = [
 
     'tailwind',
     'theme',
+    'django_countries',
     'django_browser_reload',
     'widget_tweaks',
     'naomi',

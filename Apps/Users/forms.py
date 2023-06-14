@@ -2,7 +2,12 @@ from allauth.account.forms import SignupForm
 from django import forms
 from django_countries.fields import CountryField
 
-from Apps.Users.models import User, Institution
+from Apps.Users.models import User, Institution, Teacher, Student
+
+GENDER_OPTIONS = (
+    ('M', 'Masculino'),
+    ('F', 'Femenino'),
+)
 
 
 class CreateUserForm(SignupForm):
@@ -35,9 +40,10 @@ class CreateUserForm(SignupForm):
     password2 = forms.CharField(label='Contraseña (de nuevo)', required=True, widget=forms.PasswordInput(attrs={
 
     }))
-    user_type = forms.ChoiceField(label='Tipo de usuario', choices=USER_TYPE_CHOICES, required=True, widget=forms.Select(attrs={
+    user_type = forms.ChoiceField(label='Tipo de usuario', choices=USER_TYPE_CHOICES, required=True,
+                                  widget=forms.Select(attrs={
 
-    }))
+                                  }))
 
     def save(self, request):
         user = super().save(request)
@@ -71,3 +77,37 @@ class InstitutionCreationForm(forms.ModelForm):
         model = Institution
         fields = ['manager_name', 'manager_phone', 'manager_email', 'city', 'country']
 
+
+class TeacherCreationForm(forms.ModelForm):
+    gender = forms.ChoiceField(label='Género', required=True, choices=GENDER_OPTIONS, widget=forms.Select(attrs={
+
+    }))
+    birth_date = forms.DateField(label='Fecha de Nacimiento', required=True, widget=forms.DateInput(attrs={
+        'type': 'date',
+    }))
+    country = CountryField()
+
+    class Meta:
+        model = Teacher
+        fields = ['gender', 'birth_date', 'country']
+
+
+class StudentCreationForm(forms.ModelForm):
+    gender = forms.ChoiceField(label='Género', required=True, choices=GENDER_OPTIONS, widget=forms.Select(attrs={
+
+    }))
+    birth_date = forms.DateField(label='Fecha de Nacimiento', required=True, widget=forms.DateInput(attrs={
+        'type': 'date',
+    }))
+    level = forms.CharField(label='Nivel de Estudios', required=True, widget=forms.TextInput(attrs={
+
+    }))
+    country = CountryField()
+
+    class Meta:
+        model = Student
+        fields = ['gender', 'birth_date', 'level', 'country']
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'

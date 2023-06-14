@@ -26,6 +26,7 @@ class User(AbstractUser):
     image = models.ImageField(upload_to=user_directory_image_path)
     phone = models.CharField(max_length=20)
     user_type = models.CharField(max_length=25, choices=USER_TYPE_CHOICES)
+    is_data_completed = models.BooleanField(default=False)
 
     def get_image(self):
         if self.image:
@@ -69,14 +70,14 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
+    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, blank=True, null=True)
     GENDER_OPTIONS = (
         ('M', 'Masculino'),
         ('F', 'Femenino'),
     )
-    gender = models.CharField(max_length=20, choices=GENDER_OPTIONS, null=False, blank=False)
-    birth_date = models.DateField()
-    country = CountryField(blank=False, null=False)
+    gender = models.CharField(max_length=20, choices=GENDER_OPTIONS, blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
+    country = CountryField(blank=True, null=True)
 
 
 @receiver(user_signed_up)
