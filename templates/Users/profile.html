@@ -6,6 +6,9 @@
 {% endblock %}
 
 {% block extra_head %}
+    <!-- DataTable -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css"/>
+    <link rel="stylesheet" href="{% static 'Home/css/lib/DataTables.css' %}">
     <style>
         @keyframes copied {
             0% {
@@ -34,12 +37,12 @@
     <div class="main-container relative bg-gray-100 dark:bg-gray-800" style="min-height: 100vh">
         <h1 class="text-5xl font-extrabold dark:text-white mb-6 text-center">Tu información</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
-            <div class="flex flex-wrap gap-2 p-3 bg-gray-100 rounded-lg border border-gray-200 dark:bg-gray-700 sm:col-span-1 dark:border-gray-600">
-                <div class="image w-80">
+            <div class="flex flex-wrap justify-center gap-2 p-3 bg-gray-100 rounded-lg border border-gray-200 dark:bg-gray-700 sm:col-span-1 dark:border-gray-600">
+                <div class="image w-80 mx-auto md:m-0">
                     <img class="rounded h-auto w-full object-cover" loading="lazy" src="{{ user.get_image }}"
                          alt="Extra large avatar">
                 </div>
-                <div class="info">
+                <div class="info w-full md:w-auto">
                     <div class="w-full uppercase mb-3 text-center">
                         {{ user.get_user_type | safe }}
                     </div>
@@ -91,19 +94,83 @@
 
                         <div class="border-b border-yellow-300 px-2 pb-2 w-full">
                             <h6 class="text-lg font-bold dark:text-white">Último ingreso</h6>
-                            <p class="text-gray-500 dark:text-gray-400">{{ user.last_login.date.isoformat }} - {{ user.last_login.time.hour }}:{{ user.last_login.time.minute }}</p>
+                            <p class="text-gray-500 dark:text-gray-400">{{ user.last_login.date.isoformat }}
+                                - {{ user.last_login.time.hour }}:{{ user.last_login.time.minute }}</p>
                         </div>
                     </div>
 
                     <div class="group grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
-                        <a href="{% url 'account_email' %}" class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">E-mails</a>
-                        <a href="{% url 'socialaccount_connections' %}" class="px-3 py-2 text-xs font-medium text-center text-yellow-800 bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">Cuentas</button>
-                        <a href="{% url 'account_change_password' %}" class="px-3 py-2 text-xs font-medium text-center text-white bg-red-300 rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Cambiar contraseña</a>
+                        <a href="{% url 'account_email' %}"
+                           class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">E-mails</a>
+                        <a href="{% url 'socialaccount_connections' %}"
+                           class="px-3 py-2 text-xs font-medium text-center text-yellow-800 bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">Cuentas
+                        </a>
+                        <a href="{% url 'account_change_password' %}"
+                           class="px-3 py-2 text-xs font-medium text-center text-white bg-red-800 rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Cambiar
+                            contraseña
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="p-3 bg-gray-100 rounded-lg border border-gray-200 dark:bg-gray-700 sm:col-span-1 dark:border-gray-600">
+            <div class="p-3 bg-gray-100 rounded-lg border border-gray-200 dark:bg-gray-800 sm:col-span-1 dark:border-gray-600">
+                {% if user.user_type == 'company' %}
+                    {% if user.institution.teachers and user.institution.students %}
+                        <div class="flex p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800"
+                             role="alert">
+                            <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                      clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                <span class="font-medium">¡Alerta!</span> Hemos detectado que no has creado tus usuarios
+                                (Profesores, Estudiantes y Staff). Puedes crearlos en cualquier momento.
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% if user_profile.institution is None and not user_profile.joined %}
+                        <div class="flex p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800"
+                             role="alert">
+                            <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                      clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                <span class="font-medium">¡Alerta!</span> Hemos detectado que no has hecho una petición
+                                a tu institución educativa. Por favor, selecciona a cuál perteneces y ellos aprobarán tu
+                                solicitud para unirte.
+                            </div>
+                        </div>
 
+
+                        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+                                   id="table_institutions">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">
+                                        Institución
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Director
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Solicitar unirme
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -113,5 +180,10 @@
 {% endblock %}
 
 {% block javascript %}
+    <!-- DataTable -->
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
     <script src="{% static 'Users/js/copyEmailUser.js' %}"></script>
+    <script src="{% static 'Home/js/components/datatables.js' %}"></script>
+    <script src="{% static 'Users/js/listInstitutions.js' %}"></script>
 {% endblock %}

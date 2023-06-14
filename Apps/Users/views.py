@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.http import JsonResponse, HttpResponse
@@ -57,7 +59,6 @@ def complete_data(request, user_id):
     if request.method == 'POST':
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if is_ajax:
-            print('is ajax')
             if user.user_type == 'company':
                 form = InstitutionCreationForm(request.POST, request.FILES, instance=user_instance)
             elif user.user_type == 'teacher':
@@ -65,9 +66,7 @@ def complete_data(request, user_id):
             else:
                 form = StudentCreationForm(request.POST, request.FILES, instance=user_instance)
             if form.is_valid():
-                print('is valid')
                 instance = form.save(commit=False)
-                # instance.user = user
                 instance.user.is_data_completed = True
                 instance.user.save()
                 instance.save()
@@ -78,7 +77,6 @@ def complete_data(request, user_id):
                 response.status_code = 201
                 return response
             else:
-                print('is not valid')
                 message = f'No se pudo registrar los datos'
                 user_data = {'id': 0, 'username': None}
                 response = JsonResponse(
@@ -86,8 +84,26 @@ def complete_data(request, user_id):
                 response.status_code = 400
                 return response
         else:
-            print('is not ajax')
             return redirect('home:home')
 
     return render(request, 'Users/complete_data.html', data)
 
+
+@login_required
+def list_institutions(request):
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    if is_ajax:
+        institutions = Institution.objects.all()
+        institutions_list = []
+        for institution in institutions:
+            data_institution = {}
+            data_institution['institution_user_id'] = institution.user.id
+            data_institution['institution_user_username'] = institution.user.get_username()
+            data_institution['institution_id'] = institution.id
+            data_institution['institution_name'] = institution.user.get_full_name()
+            data_institution['institution_manager_name'] = institution.manager_name
+            institutions_list.append(data_institution)
+
+        data = json.dumps(institutions_list)
+        return HttpResponse(data, 'application/json')
+    return redirect('users:profile', request.user.username)

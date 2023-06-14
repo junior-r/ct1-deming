@@ -57,7 +57,8 @@ class Institution(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, blank=True, null=True)
+    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, blank=True, null=True,
+                                    verbose_name='students', related_name='students')
     GENDER_OPTIONS = (
         ('M', 'Masculino'),
         ('F', 'Femenino'),
@@ -66,11 +67,13 @@ class Student(models.Model):
     birth_date = models.DateField(blank=True, null=True)
     level = models.CharField(max_length=150, blank=True, null=True)
     country = CountryField(blank=True, null=True)
+    joined = models.BooleanField(default=False)
 
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, blank=True, null=True)
+    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, blank=True, null=True,
+                                    verbose_name='teachers', related_name='teachers')
     GENDER_OPTIONS = (
         ('M', 'Masculino'),
         ('F', 'Femenino'),
@@ -78,6 +81,7 @@ class Teacher(models.Model):
     gender = models.CharField(max_length=20, choices=GENDER_OPTIONS, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     country = CountryField(blank=True, null=True)
+    joined = models.BooleanField(default=False)
 
 
 @receiver(user_signed_up)
