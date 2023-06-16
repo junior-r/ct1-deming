@@ -131,48 +131,73 @@
                         </div>
                     {% endif %}
                 {% else %}
-                    {% if user_profile.institution is None and not user_profile.joined %}
-                        <div class="flex p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800"
-                             role="alert">
-                            <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
-                                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                      clip-rule="evenodd"></path>
-                            </svg>
-                            <span class="sr-only">Info</span>
-                            <div>
-                                <span class="font-medium">¡Alerta!</span> Hemos detectado que no has hecho una petición
-                                a tu institución educativa. Por favor, selecciona a cuál perteneces y ellos aprobarán tu
-                                solicitud para unirte.
+                    {% if not user_profile.joined %}
+                        {% if user_profile.institution is None %}
+                            <div class="flex p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800"
+                                 role="alert">
+                                <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                                     viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="sr-only">Info</span>
+                                <div>
+                                    <span class="font-medium">¡Alerta!</span> Hemos detectado que no has hecho una
+                                    petición
+                                    a tu institución educativa. Por favor, selecciona a cuál perteneces y ellos
+                                    aprobarán tu
+                                    solicitud para unirte.
+                                </div>
                             </div>
-                        </div>
 
 
-                        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
-                                   id="table_institutions">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">
-                                        Institución
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Director
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Solicitar unirme
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+                                       id="table_institutions">
+                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">
+                                            Institución
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Director
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Solicitar unirme
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="request-sent flex flex-col items-center justify-center h-full">
+                                <div class="header">
+                                    <svg fill="none" class="w-36 h-36 text-green-400" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                                    </svg>
+                                </div>
+                                <div class="body text-center">
+                                    <h4 class="text-2xl font-bold dark:text-white">¡En hora buena!</h4>
+                                    <p class="my-3 text-gray-500 dark:text-gray-400">Tu solicitud se ha enviado. La respuesta aparecerá aquí.</p>
+                                </div>
+                                <div class="footer">
+
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>
         </div>
+    </div>
+
+    <div id="drawer_create">
+
     </div>
 {% endblock %}
 
@@ -185,5 +210,8 @@
     <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
     <script src="{% static 'Users/js/copyEmailUser.js' %}"></script>
     <script src="{% static 'Home/js/components/datatables.js' %}"></script>
+    <script src="{% static 'Home/js/components/manage_modals.js' %}"></script>
+    <script src="{% static 'Home/js/components/messages.js' %}"></script>
     <script src="{% static 'Users/js/listInstitutions.js' %}"></script>
+    <script src="{% static 'Home/js/components/create_objects.js' %}"></script>
 {% endblock %}

@@ -17,6 +17,10 @@ function register(create_form) {
                 close_modal('drawer_create')
                 checkForUserData()
             }
+            if (response.object === 'RequestJoin') {
+                messages(response)
+                close_modal('drawer_create')
+            }
         },
         error: function (error) {
             let errors = "";

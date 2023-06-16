@@ -28,6 +28,14 @@ class User(AbstractUser):
     user_type = models.CharField(max_length=25, choices=USER_TYPE_CHOICES)
     is_data_completed = models.BooleanField(default=False)
 
+    def get_instance(self):
+        if self.user_type == 'company':
+            return Institution.objects.get(user_id=self.id)
+        elif self.user_type == 'teacher':
+            return Teacher.objects.get(user_id=self.id)
+        else:
+            return Student.objects.get(user_id=self.id)
+
     def get_image(self):
         if self.image:
             return self.image.url
@@ -54,6 +62,9 @@ class Institution(models.Model):
     city = models.CharField(blank=False, null=False)
     country = CountryField(blank=False, null=False)
 
+    def __str__(self):
+        return f"Institution: {self.user.get_full_name()}"
+
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -67,7 +78,9 @@ class Student(models.Model):
     birth_date = models.DateField(blank=True, null=True)
     level = models.CharField(max_length=150, blank=True, null=True)
     country = CountryField(blank=True, null=True)
-    joined = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Student: {self.user.get_full_name()}"
 
 
 class Teacher(models.Model):
@@ -81,7 +94,27 @@ class Teacher(models.Model):
     gender = models.CharField(max_length=20, choices=GENDER_OPTIONS, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     country = CountryField(blank=True, null=True)
-    joined = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Teacher: {self.user.get_full_name()}"
+
+
+class RequestToJoin(models.Model):
+    STATUS_REQUEST = [
+        ('Approved', 'Aprovada'),
+        ('Pending', 'Pendiente'),
+        ('Rejected', 'Rechazada'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='join_requests',
+                             limit_choices_to={'user_type__in': ['student', 'teacher']})
+    institution = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requested_joins',
+                                    limit_choices_to={'user_type': ['company']})
+    status = models.CharField(max_length=25, choices=STATUS_REQUEST, default='Pending')
+    date_created = models.DateTimeField(auto_now_add=True)
+    additional_info = models.TextField(max_length=150, null=True, blank=True)
+
+    def __str__(self):
+        return f"Request to join: {self.user} - {self.institution}"
 
 
 @receiver(user_signed_up)

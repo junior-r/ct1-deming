@@ -1,5 +1,6 @@
 import json
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.http import JsonResponse, HttpResponse
@@ -12,12 +13,7 @@ from Apps.Users.models import User, Student, Teacher, Institution
 @login_required
 def profile(request, username):
     user = get_object_or_404(User, username=username)
-    if user.user_type == 'student':
-        user_profile = get_object_or_404(Student, user=user)
-    elif user.user_type == 'teacher':
-        user_profile = get_object_or_404(Teacher, user=user)
-    else:
-        user_profile = get_object_or_404(Institution, user=user)
+    user_profile = user.get_instance()
 
     data = {
         'user': user,
@@ -32,7 +28,7 @@ def check_user_data(request):
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     if is_ajax:
         user = get_object_or_404(User, id=request.user.id)
-        data = serialize('json', [user,])
+        data = serialize('json', [user, ])
         return HttpResponse(data, 'application/json')
     return redirect('home:home')
 
@@ -71,7 +67,8 @@ def complete_data(request, user_id):
                 instance.user.save()
                 instance.save()
                 message = f'Datos completados correctamente'
-                new_user_data = {'id': instance.user.id, 'username': instance.user.get_username(), 'completed_data': user.is_data_completed}
+                new_user_data = {'id': instance.user.id, 'username': instance.user.get_username(),
+                                 'completed_data': user.is_data_completed}
                 response = JsonResponse(
                     {'message': message, 'user': new_user_data, 'object': 'UserData', 'icon': 'success'})
                 response.status_code = 201
@@ -102,8 +99,44 @@ def list_institutions(request):
             data_institution['institution_id'] = institution.id
             data_institution['institution_name'] = institution.user.get_full_name()
             data_institution['institution_manager_name'] = institution.manager_name
+            data_institution['current_user_id'] = request.user.id
+            data_institution['current_user_username'] = request.user.username
             institutions_list.append(data_institution)
 
         data = json.dumps(institutions_list)
         return HttpResponse(data, 'application/json')
     return redirect('users:profile', request.user.username)
+
+
+@login_required
+def request_to_join(request, institution_id, user_id):
+    print(institution_id, user_id)
+    user = get_object_or_404(User, id=user_id)
+    user_instance = user.get_instance()
+    if user.user_type in ['student', 'teacher']:
+        institution = get_object_or_404(Institution, id=institution_id)
+        data = {
+            'user': user,
+            'institution': institution,
+            'user_instance': user_instance,
+        }
+
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if is_ajax and request.method == 'POST':
+            description = request.POST.get('description')
+            user_instance.description = description
+            user_instance.institution = institution
+            user_instance.save()
+
+            message = f'Tu solicitud de unión fué enviada a {institution.user.get_full_name().capitalize()}'
+            user_data = {'id': user_instance.id, 'full_name': user_instance.user.get_full_name(),
+                         'is_joined': user_instance.joined}
+            response = JsonResponse(
+                {'message': message, 'user': user_data, 'object': 'RequestJoin', 'icon': 'success'})
+            response.status_code = 201
+            return response
+
+        return render(request, 'Users/request_to_join.html', data)
+    else:
+        messages.error(request, 'No puedes unirte a una institución o compañia si ya eres una de estas.')
+        return redirect('users:profile', user.username)
